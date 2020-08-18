@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/wutao/projects/httpdevelopers/build",
-  "command": "/bin/c++   -I../includes  -g   -o CMakeFiles/httpdevelopers.dir/main.cpp.o -c /home/wutao/projects/httpdevelopers/main.cpp",
-  "file": "/home/wutao/projects/httpdevelopers/main.cpp"
-}
-]
