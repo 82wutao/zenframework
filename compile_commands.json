@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/wutao/projects/httpdevelopers",
+  "command": "/usr/bin/c++  -I/home/wutao/projects/httpdevelopers/includes -g -o CMakeFiles/httpdevelopers.dir/main.cpp.o -c /home/wutao/projects/httpdevelopers/main.cpp",
+  "file": "/home/wutao/projects/httpdevelopers/main.cpp"
+}
+]
