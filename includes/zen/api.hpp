@@ -2,6 +2,9 @@
 #define __ZEN_FRAMEWORK_API_HPP
 
 #include "zen/constants.hpp"
+
+#include <functional>
+
 using namespace zen::constants;
 
 namespace zen{
@@ -55,7 +58,7 @@ namespace zen{
             virtual int read_from_body(void*,int,int) = 0;
         };
 
-        class Http_Reponse{
+        class Http_Response{
         public:
             virtual void  set_head(const char*,char*) =0;
             virtual void  set_schema(char*)=0;
@@ -72,11 +75,11 @@ namespace zen{
             // TODO doc root dir
         };
 
-        using Controller =char* (*)(request_context*, Http_Request*,Http_Reponse*);
+        using Controller =char* (*)(request_context*, Http_Request*,Http_Response*);
 
 
-        using next = void (*)();
-        using Middleware = void (*)(request_context*, Http_Request*,Http_Reponse*,next);
+        using Next = std::function<void (Http_Request*,Http_Response*)>;
+        using Middleware = void (*)(request_context*, Http_Request*,Http_Response*,Next);
 
         using http_connection = int;
         using root_interface = void (*)(http_connection);

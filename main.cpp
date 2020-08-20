@@ -1,3 +1,5 @@
+
+#include "zen/api.hpp"
 #include <iostream>
 #include <vector>
 
@@ -15,64 +17,66 @@
 // steam
 // chunk
 
-        char* Controller(int request ,int response){
-            return "hello";
-        }
 
-        using next= void (*)(int,int);
-        using Middleware = void (*)(int, int,next);
-        std::vector<Middleware> middleware_stack;
-
-        int stack_index = 0 ;
-        next next_ref = NULL;
-        void next_middleware(int request,int response){
-            stack_index++;
-            if (stack_index == middleware_stack.size()){
-                std::cout<<"invoke Controller func"<<std::endl;
-            }else{
-                auto instance =middleware_stack[stack_index];
-                instance(request,response,next_ref);
-            }
-        }
+using namespace zen::framework;
 
 
-
-void middle1(int request, int response,next func){
+void middle1(request_context* context,Http_Request* request, Http_Response* response,Next func){
     std::cout<<"middle1 top"<<std::endl;
     func(request,response);
     std::cout<<"middle1 bottom"<<std::endl;
 }
-void middle2(int request, int response,next func){
+void middle2(request_context* context,Http_Request* request, Http_Response* response,Next func){
         std::cout<<"middle2 top"<<std::endl;
     func(request,response);
     std::cout<<"middle2 bottom"<<std::endl;
 }
-void middle3(int request, int response,next func){
+void middle3(request_context* context,Http_Request* request, Http_Response* response,Next func){
         std::cout<<"middle3 top"<<std::endl;
     func(request,response);
     std::cout<<"middle3 bottom"<<std::endl;
 }
 
 
-        using http_connection = int;
-        using root_interface = void (*)(http_connection);
 
+void boot_filter ( request_context* context, Http_Request* request,Http_Response* response,Next next_middleware )
+{
+    std::cout<<"boot_filter top"<<std::endl;
+    next_middleware ( request,response );
+    std::cout<<"boot_filter bottom"<<std::endl;
+}
 
+std::vector<Middleware> middleware_stack;
 int main(int argc, char **argv) {
 
 
 
-next_ref = next_middleware;
 
 
 middleware_stack.push_back(middle1);
 middleware_stack.push_back(middle2);
 middleware_stack.push_back(middle3);
 
-middle1(0,9,next_ref);
 
 
 
+    int stack_index=0;
+    Next next_ref = NULL;
+    Next next_func = [&next_ref,&stack_index] ( Http_Request* request,Http_Response* response ) {
+        if ( stack_index == middleware_stack.size() ) {
+            std::cout<<"invoke Controller func"<<std::endl;
+            return;
+        }
+        Middleware instance =middleware_stack[stack_index];
+        stack_index++;
+        instance ( NULL,request,response,next_ref );
+    };
+    next_ref = next_func;
+
+    Http_Request* request = NULL;//connection.xxx
+    Http_Response* response = NULL;//connection.yyy
+
+    boot_filter ( NULL,request,response,next_func );
     std::cout << "Hello, world!" << std::endl;
     return 0;
 }
