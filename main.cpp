@@ -2,6 +2,7 @@
 #include "zen/api.hpp"
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 //#include "zen/api.hpp"
 
@@ -21,25 +22,29 @@
 using namespace zen::framework;
 
 
-void middle1(request_context* context,Http_Request* request, Http_Response* response,Next func){
+void middle1(Request_context* context,Http_Request* request, Http_Response* response,Next func){
     std::cout<<"middle1 top"<<std::endl;
     func(request,response);
     std::cout<<"middle1 bottom"<<std::endl;
 }
-void middle2(request_context* context,Http_Request* request, Http_Response* response,Next func){
+void middle2(Request_context* context,Http_Request* request, Http_Response* response,Next func){
         std::cout<<"middle2 top"<<std::endl;
     func(request,response);
     std::cout<<"middle2 bottom"<<std::endl;
 }
-void middle3(request_context* context,Http_Request* request, Http_Response* response,Next func){
+void middle3(Request_context* context,Http_Request* request, Http_Response* response,Next func){
         std::cout<<"middle3 top"<<std::endl;
     func(request,response);
     std::cout<<"middle3 bottom"<<std::endl;
 }
 
+template<typename Ret,typename... T>
+void regist(std::function<Ret(T...)> ctlor,std::function<std::tuple<T...>(int)> abs) {
+
+}
 
 
-void boot_filter ( request_context* context, Http_Request* request,Http_Response* response,Next next_middleware )
+void boot_filter (Request_context* context, Http_Request* request,Http_Response* response,Next next_middleware )
 {
     std::cout<<"boot_filter top"<<std::endl;
     next_middleware ( request,response );
@@ -53,9 +58,9 @@ int main(int argc, char **argv) {
 
 
 
-middleware_stack.push_back(middle1);
-middleware_stack.push_back(middle2);
-middleware_stack.push_back(middle3);
+    middleware_stack.push_back(middle1);
+    middleware_stack.push_back(middle2);
+    middleware_stack.push_back(middle3);
 
 
 
@@ -78,5 +83,16 @@ middleware_stack.push_back(middle3);
 
     boot_filter ( NULL,request,response,next_func );
     std::cout << "Hello, world!" << std::endl;
+
+
+
+
+
+
+
+
+
+
+
     return 0;
 }

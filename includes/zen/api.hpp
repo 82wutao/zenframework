@@ -68,18 +68,16 @@ namespace zen{
         };
 
 
-        struct request_context{
+        struct Request_context{
             // TODO pid pgroup
             // TODO thread
             // TODO app name,
             // TODO doc root dir
         };
 
-        using Controller =char* (*)(request_context*, Http_Request*,Http_Response*);
-
-
+        using Controller = void (*)(Request_context*, Http_Request*,Http_Response*);
         using Next = std::function<void (Http_Request*,Http_Response*)>;
-        using Middleware = void (*)(request_context*, Http_Request*,Http_Response*,Next);
+        using Middleware = void (*)(Request_context*, Http_Request*,Http_Response*,Next);
 
         using http_connection = int;
         using root_interface = void (*)(http_connection);
