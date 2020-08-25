@@ -14,9 +14,9 @@ namespace zen {
 
     namespace framework {
         template<typename Ret, typename... T>
-        register_route(std::string , int , std::function<Ret(T...)>, std::function<std::tuple<T...>(Http_Request*)>);
+        void register_route_abstractor(std::string , int , std::function<Ret(T...)>, std::function<std::tuple<T...>(Http_Request*)>);
 
-        register_route(std::string , int , Controller);
+        void register_route(std::string , int , Controller);
         void root_interface_func(http_connection conncetion);
     }
 }

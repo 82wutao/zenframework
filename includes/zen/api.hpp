@@ -43,7 +43,7 @@ namespace zen{
 
         class Http_Request{
         public:
-            virtual char* get_method() = 0;
+            virtual int get_method() = 0;
             virtual char* get_path() = 0;
             virtual char* get_schema() = 0;
             virtual char* get_version() = 0;
@@ -63,7 +63,7 @@ namespace zen{
             virtual void  set_head(const char*,char*) =0;
             virtual void  set_schema(char*)=0;
             virtual void  set_version(char*)=0;
-            virtual void  set_statuscode(constants::StatusCode*)=0;
+            virtual void  set_statuscode(const constants::StatusCode*)=0;
             virtual int   write_to_body(void*,int,int)=0;
         };
 

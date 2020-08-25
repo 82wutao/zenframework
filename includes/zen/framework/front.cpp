@@ -4,6 +4,7 @@
 
 
 #include "zen/api.hpp"
+#include "zen/constants.hpp"
 
 #include <vector>
 #include <map>
@@ -11,17 +12,19 @@
 #include <tuple>
 #include <exception>
 
-#include "front.hpp"
+#include "zen/framework/front.hpp"
+
+
 
 namespace zen
 {
 namespace framework
 {
-
 //        using http_connection = int;
 //        void web_app_protocol_interface(http_connection);
 
-
+std::vector<Middleware> middleware_stack;
+std::map<std::string, std::tuple<int,Controller>> controllers;
 
     void boot_filter(Request_context* context, Http_Request* request, Http_Response* response, Next next_middleware)
     {
@@ -30,40 +33,40 @@ namespace framework
         std::cout << "boot_filter bottom" << std::endl;
     }
     void terminal_filter(Request_context* context, Http_Request* request, Http_Response* response, Next next_middleware) {
-        std::string path = request->get_path;
-        map<std::string, std::tuple<int, Controller> >::iterator it = controllers.find(path);
+        std::string path = request->get_path();
+        std::map<std::string, std::tuple<int, Controller> >::iterator it = controllers.find(path);
         if (it == controllers.end()) {
-            response->set_statuscode(zen::constants::STATUSCODE_404);
+            response->set_statuscode(&zen::constants::STATUSCODE_404);
             return;
         }
 
         int method = request->get_method();
         std::tuple<int, Controller> combine = it->second;
         int methods = std::get<0>(combine);
-        if (methods & method != method) {
-            response->set_statuscode(zen::constants::STATUSCODE_405);
+        if ((methods & method) != method) {
+            response->set_statuscode(&zen::constants::STATUSCODE_405);
             return;
         }
         try {
             Controller er = std::get<1>(combine);
-            er(request, response);
+            er(nullptr,request, response);
         }
         catch (std::exception& e) {
-            response->set_statuscode(zen::constants::STATUSCODE_500);
+
+            response->set_statuscode(&zen::constants::STATUSCODE_500);
         }
     }
 
-std::vector<Middleware> middleware_stack;
-std::map<std::string, std::tuple<int,Controller>> controllers;
+
 
 template<typename Ret, typename... T>
-register_route(std::string path, int methods, std::function<Ret(T...)> controller, std::function<std::tuple<T...>(Http_Request*)> param_convertor) {
+void register_route_abstractor(std::string path, int methods, std::function<Ret(T...)> controller, std::function<std::tuple<T...>(Http_Request*)> param_convertor) {
 
 }
 
-register_route(std::string path, int methods, Controller controller)
+void register_route(std::string path, int methods, Controller controller)
 {
-    controllers.operator[path] = std::make_tuple(methods, controller);
+    controllers[path] = std::make_tuple(methods, controller);
 }
 
 void root_interface_func ( http_connection conncetion )
@@ -87,11 +90,6 @@ void root_interface_func ( http_connection conncetion )
 
 
 
-    map<int, string >::iterator l_it;;
-    l_it = maplive.find(112);
-    if (l_it == maplive.end())
-        cout << "we do not find 112" << endl;
-    else cout << "wo find 112" << endl;
 
 
     int stack_index = 0;
