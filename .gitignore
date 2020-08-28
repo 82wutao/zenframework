@@ -6,3 +6,5 @@ CMakeFiles
 .kdev4
 .vs
 build
+*.out
+*.exe
